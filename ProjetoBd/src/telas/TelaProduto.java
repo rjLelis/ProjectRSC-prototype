@@ -1,0 +1,333 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package telas;
+
+import java.sql.*;
+import conexao.ModuloConexao;
+import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author Lelis
+ */
+public class TelaProduto extends javax.swing.JInternalFrame {
+
+    Connection conexao;
+    PreparedStatement pst;
+    ResultSet rs;
+
+    /**
+     * Creates new form TelaProduto
+     */
+    public TelaProduto() {
+        conexao = ModuloConexao.conector();
+        initComponents();
+    }
+
+    private void limparCampos() {
+        txtId.setText(null);
+        txtPreco.setText(null);
+        txtQuantidade.setText(null);
+        txtTamanho.setText(null);
+        txtReferencia.setText(null);
+        btnCadastrar.setEnabled(true);
+    }
+
+    private void cadastrar() {
+        String sql = "INSERT INTO produto (id_produto,preco_unitario,quantidade,tamanho,referencia)"
+                + "VALUES (?,?,?,?,?)";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtId.getText());
+            pst.setString(2, txtPreco.getText());
+            pst.setString(3, txtQuantidade.getText());
+            pst.setString(4, txtTamanho.getText());
+            pst.setString(5, txtReferencia.getText());
+            if (txtId.getText().isEmpty() || txtPreco.getText().isEmpty()
+                    || txtQuantidade.getText().isEmpty() || txtTamanho.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Preencha os campos obrigatórios", "Atenção", JOptionPane.ERROR_MESSAGE);
+            } else {
+                int cadastro = pst.executeUpdate();
+                if (cadastro > 0) {
+                    JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso", "Sucesso", JOptionPane.PLAIN_MESSAGE);
+                    limparCampos();
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
+    }
+
+    private void remover(String id) {
+        String sql = "DELETE FROM produto where id_produto = ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, id);
+            int resposta = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja excluir este produto?", "Atenção", JOptionPane.YES_NO_OPTION);
+            if (resposta == JOptionPane.YES_OPTION) {
+                int remover = pst.executeUpdate();
+                if (remover > 0) {
+                    JOptionPane.showMessageDialog(this, "Produto removido com sucesso!", "Sucesso", JOptionPane.PLAIN_MESSAGE);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
+    }
+
+    private void procurar(String id) {
+        String sql = "Select * from produto where id_produto = ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, id);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                txtId.setText(rs.getString(1));
+                txtPreco.setText(rs.getString(2));
+                txtQuantidade.setText(rs.getString(3));
+                txtTamanho.setText(rs.getString(4));
+                txtReferencia.setText(rs.getString(5));
+                btnCadastrar.setEnabled(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "Nenhum produto achado", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
+    }
+    
+    private void atualizar() {
+        String sql = "UPDATE produto SET id_produto = ?, preco_unitario = ?, quantidade = ?, referencia = ? WHERE id_produto = ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtId.getText());
+            pst.setString(2, txtPreco.getText());
+            pst.setString(3, txtQuantidade.getText());
+            pst.setString(4, txtReferencia.getText());
+            pst.setString(5, txtId.getText());
+            if (txtId.getText().isEmpty() || txtPreco.getText().isEmpty()
+                    || txtQuantidade.getText().isEmpty() || txtTamanho.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Preencha os campos obrigatórios", "Atenção", JOptionPane.ERROR_MESSAGE);
+            } else {
+                int cadastro = pst.executeUpdate();
+                if (cadastro > 0) {
+                    JOptionPane.showMessageDialog(this, "Dados atualizados com sucesso", "Sucesso", JOptionPane.PLAIN_MESSAGE);
+                    limparCampos();
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        lblId = new javax.swing.JLabel();
+        lblPreco = new javax.swing.JLabel();
+        lblQuantidade = new javax.swing.JLabel();
+        lblTamanho = new javax.swing.JLabel();
+        lblReferencia = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        txtId = new javax.swing.JTextField();
+        txtQuantidade = new javax.swing.JTextField();
+        txtTamanho = new javax.swing.JTextField();
+        txtReferencia = new javax.swing.JTextField();
+        txtPreco = new javax.swing.JFormattedTextField();
+        btnCadastrar = new javax.swing.JButton();
+        btnAtualizar = new javax.swing.JButton();
+        btnRemover = new javax.swing.JButton();
+        btnProcurar = new javax.swing.JButton();
+        btnLimparCampos = new javax.swing.JButton();
+
+        setClosable(true);
+        setTitle("Cadastro de Produtos");
+
+        lblId.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblId.setText("*Id");
+
+        lblPreco.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblPreco.setText("*Preço unitário");
+
+        lblQuantidade.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblQuantidade.setText("*Quantidade");
+
+        lblTamanho.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblTamanho.setText("*Tamanho");
+
+        lblReferencia.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblReferencia.setText("referência");
+
+        jLabel6.setText("* Campos obrigatórios");
+
+        txtPreco.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter()));
+
+        btnCadastrar.setText("Cadastrar");
+        btnCadastrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarActionPerformed(evt);
+            }
+        });
+
+        btnAtualizar.setText("Atualizar");
+        btnAtualizar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtualizarActionPerformed(evt);
+            }
+        });
+
+        btnRemover.setText("Remover");
+        btnRemover.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverActionPerformed(evt);
+            }
+        });
+
+        btnProcurar.setText("Procurar");
+        btnProcurar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnProcurar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProcurarActionPerformed(evt);
+            }
+        });
+
+        btnLimparCampos.setText("Limpar Campos");
+        btnLimparCampos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLimparCampos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimparCamposActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnCadastrar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAtualizar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnRemover)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnProcurar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblId)
+                            .addComponent(lblQuantidade)
+                            .addComponent(lblTamanho)
+                            .addComponent(lblReferencia)
+                            .addComponent(lblPreco))
+                        .addGap(29, 29, 29)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(txtId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                                .addComponent(txtTamanho, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtQuantidade, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtPreco, javax.swing.GroupLayout.Alignment.LEADING)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnLimparCampos)
+                    .addComponent(jLabel6))
+                .addGap(18, 18, 18))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblId)
+                            .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(lblPreco))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLimparCampos)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblQuantidade)
+                    .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTamanho)
+                    .addComponent(txtTamanho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblReferencia)
+                    .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(35, 35, 35)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCadastrar)
+                    .addComponent(btnAtualizar)
+                    .addComponent(btnRemover)
+                    .addComponent(btnProcurar))
+                .addContainerGap(125, Short.MAX_VALUE))
+        );
+
+        setBounds(0, 0, 580, 426);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnLimparCamposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparCamposActionPerformed
+        limparCampos();
+    }//GEN-LAST:event_btnLimparCamposActionPerformed
+
+    private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+        cadastrar();
+    }//GEN-LAST:event_btnCadastrarActionPerformed
+
+    private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
+        String deletado = JOptionPane.showInputDialog(this, "Digite o E-mail do representante para exclui-lo");
+        remover(deletado);
+    }//GEN-LAST:event_btnRemoverActionPerformed
+
+    private void btnProcurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProcurarActionPerformed
+        String procurar = JOptionPane.showInputDialog(this, "Digite o Id do Produto");
+        procurar(procurar);
+    }//GEN-LAST:event_btnProcurarActionPerformed
+
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
+        atualizar();
+    }//GEN-LAST:event_btnAtualizarActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAtualizar;
+    private javax.swing.JButton btnCadastrar;
+    private javax.swing.JButton btnLimparCampos;
+    private javax.swing.JButton btnProcurar;
+    private javax.swing.JButton btnRemover;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel lblId;
+    private javax.swing.JLabel lblPreco;
+    private javax.swing.JLabel lblQuantidade;
+    private javax.swing.JLabel lblReferencia;
+    private javax.swing.JLabel lblTamanho;
+    private javax.swing.JTextField txtId;
+    private javax.swing.JFormattedTextField txtPreco;
+    private javax.swing.JTextField txtQuantidade;
+    private javax.swing.JTextField txtReferencia;
+    private javax.swing.JTextField txtTamanho;
+    // End of variables declaration//GEN-END:variables
+}
